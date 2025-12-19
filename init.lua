@@ -18,6 +18,13 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
   })
 end
 vim.opt.rtp:prepend(lazypath)
+vim.diagnostic.config({
+  float = {
+    border = "rounded",
+  },
+  severity_sort = true,
+})
+
 local plugins = {
   { 
     "catppuccin/nvim", 
@@ -46,14 +53,13 @@ local plugins = {
   },
 
   {
-    'nvim-treesitter/nvim-treesitter', 
+    'nvim-treesitter/nvim-treesitter',
     build = ":TSUpdate",
     config = function()
       local status_ok, configs = pcall(require, "nvim-treesitter.configs")
       if not status_ok then
         return
       end
-      
       configs.setup({
         ensure_installed = { "lua", "javascript", "cpp", "python"},
         sync_install = false,
@@ -81,10 +87,89 @@ local plugins = {
     lazy = false, -- neo-tree will lazily load itself
 
     config = function()
-      vim.keymap.set('n', '<C-n>', ':Neotree filesystem reveal left<CR>', {})
+      vim.keymap.set('n', '<C-n>', ':Neotree filesystem toggle left<CR>', {})
       vim.keymap.set('n', '<leader>bf', ':Neotree buffers reveal float<CR>', {})
 	end,
   },
+  {
+  "neovim/nvim-lspconfig",
+  dependencies = {
+    "williamboman/mason.nvim",
+    "williamboman/mason-lspconfig.nvim",
+    "hrsh7th/nvim-cmp",
+    "hrsh7th/cmp-nvim-lsp",
+    "hrsh7th/cmp-buffer",
+    "hrsh7th/cmp-path",
+  },
+  config = function()
+    -- Mason
+    require("mason").setup()
+
+    require("mason-lspconfig").setup({
+      ensure_installed = {
+        "lua_ls",
+        "ts_ls",
+        "pyright",
+        "clangd",
+      },
+    })
+
+    -- nvim-cmp (completion UI)
+    local cmp = require("cmp")
+
+    cmp.setup({
+      mapping = cmp.mapping.preset.insert({
+        ["<CR>"] = cmp.mapping.confirm({ select = true }),
+        ["<Tab>"] = cmp.mapping.select_next_item(),
+        ["<S-Tab>"] = cmp.mapping.select_prev_item(),
+      }),
+      sources = {
+        { name = "nvim_lsp" },
+        { name = "buffer" },
+        { name = "path" },
+      },
+    })
+
+    -- LSP capabilities (connect LSP → cmp)
+    local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+    -- Neovim 0.11+ native LSP config
+    vim.lsp.config("lua_ls", {
+      capabilities = capabilities,
+      settings = {
+        Lua = {
+          diagnostics = {
+            globals = { "vim" },
+          },
+        },
+      },
+    })
+
+    vim.lsp.config("ts_ls", {
+      capabilities = capabilities,
+    })
+
+    vim.lsp.config("pyright", {
+      capabilities = capabilities,
+    })
+
+    vim.lsp.config("clangd", {
+      capabilities = capabilities,
+    })
+  end,
+},
+  {
+    "nvim-lualine/lualine.nvim",
+    config = function()
+      require('lualine').setup({
+        options = {
+          theme = 'dracula'
+        }
+      })
+
+    end
+  }
+
 }
 
 require("lazy").setup(plugins, {})
