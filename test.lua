@@ -21,7 +21,7 @@ vim.opt.rtp:prepend(lazypath)
 local plugins = {
   { 
     "catppuccin/nvim", 
-    name = "catppuccin",  
+    name = "catppuccin", 
     priority = 1000,
     lazy = false,
     config = function()
@@ -42,6 +42,7 @@ local plugins = {
       local builtin = require("telescope.builtin")
       vim.keymap.set('n', '<C-p>', builtin.find_files, {})
       vim.keymap.set('n', '<leader>f', builtin.live_grep, {})
+      
     end
   },
 
@@ -69,21 +70,6 @@ local plugins = {
     config = function()
       require("nvim-autopairs").setup({})
     end
-  },
-  {
-    "nvim-neo-tree/neo-tree.nvim",
-    branch = "v3.x",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "MunifTanjim/nui.nvim",
-      "nvim-tree/nvim-web-devicons", -- optional, but recommended
-    },
-    lazy = false, -- neo-tree will lazily load itself
-
-    config = function()
-      vim.keymap.set('n', '<C-n>', ':Neotree filesystem reveal left<CR>', {})
-      vim.keymap.set('n', '<leader>bf', ':Neotree buffers reveal float<CR>', {})
-	end,
   },
 }
 
