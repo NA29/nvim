@@ -32,10 +32,6 @@ vim.diagnostic.config({
   severity_sort = true,
 })
 
--- =========================
--- Enable winbar (breadcrumbs)
--- =========================
-vim.o.winbar = "%{%v:lua.require'barbecue.ui'.get_winbar()%}"
 
 -- =========================
 -- Plugins
@@ -47,7 +43,9 @@ local plugins = {
     priority = 1000,
     lazy = false,
     config = function()
-      require("catppuccin").setup({})
+      require("catppuccin").setup({
+        transparent_background = true,
+      })
       vim.cmd.colorscheme("catppuccin")
     end,
   },
