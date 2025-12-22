@@ -32,6 +32,13 @@ vim.diagnostic.config({
   severity_sort = true,
 })
 
+vim.keymap.set(
+  "n",
+  "K",
+  vim.diagnostic.open_float,
+  { desc = "Show diagnostic under cursor" }
+)
+
 
 -- =========================
 -- Plugins
@@ -97,8 +104,35 @@ local plugins = {
     },
     lazy = false,
     config = function()
-      vim.keymap.set("n", "<C-n>", ":Neotree filesystem toggle left<CR>", {})
-      vim.keymap.set("n", "<leader>bf", ":Neotree buffers reveal float<CR>", {})
+      vim.keymap.set("n", "<C-n>", ":Neotree filesystem toggle left<CR>")
+      vim.keymap.set("n", "<leader>bf", ":Neotree buffers reveal float<CR>")
+
+      require("neo-tree").setup({
+        filesystem = {
+          bind_to_cwd = false,
+          follow_current_file = false,
+
+          filtered_items = {
+            visible = false,
+            hide_dotfiles = true,
+            hide_gitignored = true,
+          },
+
+          window = {
+            mappings = {
+              -- navigation / rooting
+              ["l"] = "set_root",
+              ["<CR>"] = "set_root",
+              ["h"] = "navigate_up",
+              ["<BS>"] = "navigate_up",
+
+              -- toggles
+              ["H"] = "toggle_hidden",
+              ["I"] = "toggle_gitignored",
+            },
+          },
+        },
+      })
     end,
   },
 
@@ -209,6 +243,13 @@ local plugins = {
           separator = " › ",
         },
       })
+    end,
+  },
+
+  {
+    "rainbowhxch/accelerated-jk.nvim",
+    config = function()
+      require("accelerated-jk").setup()
     end,
   },
 }
