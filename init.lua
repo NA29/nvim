@@ -4,6 +4,7 @@ vim.cmd("set softtabstop=2")
 vim.cmd("set shiftwidth=2")
 vim.cmd("set number")
 vim.cmd("set relativenumber")
+vim.opt.clipboard:append("unnamedplus")
 vim.g.mapleader = " "
 
 -- =========================
@@ -39,6 +40,11 @@ vim.keymap.set(
   { desc = "Show diagnostic under cursor" }
 )
 
+-- Moving lines up and down with Alt
+vim.keymap.set("n", "<A-j>", ":m .+1<CR>==", { desc = "Move line down" })
+vim.keymap.set("n", "<A-k>", ":m .-2<CR>==", { desc = "Move line up" })
+vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
+vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
 
 -- =========================
 -- Plugins
