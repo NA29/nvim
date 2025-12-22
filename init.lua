@@ -106,7 +106,6 @@ local plugins = {
     config = function()
       vim.keymap.set("n", "<C-n>", ":Neotree filesystem toggle left<CR>")
       vim.keymap.set("n", "<leader>bf", ":Neotree buffers reveal float<CR>")
-
       require("neo-tree").setup({
         filesystem = {
           bind_to_cwd = false,
@@ -120,9 +119,14 @@ local plugins = {
 
           window = {
             mappings = {
-              -- navigation / rooting
-              ["l"] = "set_root",
-              ["<CR>"] = "set_root",
+              -- smart open
+              ["l"] = "open",
+              ["<CR>"] = "open",
+
+              -- re-root explicitly
+              ["R"] = "set_root",
+
+              -- navigation
               ["h"] = "navigate_up",
               ["<BS>"] = "navigate_up",
 
@@ -133,6 +137,8 @@ local plugins = {
           },
         },
       })
+
+
     end,
   },
 
