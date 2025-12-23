@@ -60,6 +60,7 @@ alias rmf='rm -Rfv'
 alias cpf='\cp -v'
 alias mvf='\mv -v'
 
+alias nv="nvim"
 alias lg="lazygit"
 
 # --------------------------------------------------
@@ -160,4 +161,3 @@ source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # initialize Starship prompt
 eval "$(starship init zsh)"
-
