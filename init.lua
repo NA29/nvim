@@ -4,7 +4,6 @@ vim.cmd("set softtabstop=2")
 vim.cmd("set shiftwidth=2")
 vim.cmd("set number")
 vim.cmd("set relativenumber")
-vim.opt.clipboard:append("unnamedplus")
 vim.opt.scrolloff = 5
 vim.opt.cursorline = true
 vim.g.markdown_recommended_style = 0
@@ -51,6 +50,8 @@ vim.keymap.set("n", "<A-j>", ":m .+1<CR>==", { desc = "Move line down" })
 vim.keymap.set("n", "<A-k>", ":m .-2<CR>==", { desc = "Move line up" })
 vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
 vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
+vim.keymap.set({ "n", "v" }, "<leader>y", '"+y')
+
 
 -- =========================
 -- Plugins
@@ -119,6 +120,12 @@ local plugins = {
   lazy = false,
   config = function()
     vim.keymap.set("n", "<C-n>", ":Neotree filesystem toggle left<CR>")
+    vim.keymap.set(
+      "n",
+      "<C-m>",
+      ":Neotree filesystem focus left<CR>",
+      { desc = "Focus Neo-tree" }
+    )
     vim.keymap.set("n", "<leader>bf", ":Neotree buffers reveal float<CR>")
     require("neo-tree").setup({
       filesystem = {
@@ -206,7 +213,7 @@ local plugins = {
           end
         end, { "i", "s" }),
 
-        ["<CR>"] = cmp.mapping.confirm({ select = true }),
+        ["<CR>"] = cmp.mapping.confirm({ select = false }),
       }),
       sources = {
         { name = "luasnip"},
@@ -392,6 +399,13 @@ local plugins = {
       })
     end,
   },
+  {
+    "numToStr/Comment.nvim",
+    config = function()
+      require("Comment").setup()
+    end,
+  },
+
 
 
 }
