@@ -7,6 +7,8 @@ vim.cmd("set relativenumber")
 vim.opt.clipboard:append("unnamedplus")
 vim.opt.scrolloff = 5
 vim.opt.cursorline = true
+vim.g.markdown_recommended_style = 0
+
 
 vim.g.mapleader = " "
 
@@ -87,224 +89,309 @@ local plugins = {
         return
       end
       configs.setup({
-        ensure_installed = { "lua", "javascript", "cpp", "python" },
+        ensure_installed = { "lua", "javascript", "cpp", "python", "markdown", "markdown_inline"},
         sync_install = false,
         auto_install = true,
-        highlight = { enable = true },
-        indent = { enable = true },
-      })
-    end,
-  },
-
-  {
-    "windwp/nvim-autopairs",
-    event = "InsertEnter",
-    config = function()
-      require("nvim-autopairs").setup({})
-    end,
-  },
-
-  {
-    "nvim-neo-tree/neo-tree.nvim",
-    branch = "v3.x",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "MunifTanjim/nui.nvim",
-      "nvim-tree/nvim-web-devicons",
-    },
-    lazy = false,
-    config = function()
-      vim.keymap.set("n", "<C-n>", ":Neotree filesystem toggle left<CR>")
-      vim.keymap.set("n", "<leader>bf", ":Neotree buffers reveal float<CR>")
-      require("neo-tree").setup({
-        filesystem = {
-          bind_to_cwd = false,
-          follow_current_file = false,
-
-          filtered_items = {
-            visible = false,
-            hide_dotfiles = true,
-            hide_gitignored = true,
-          },
-
-          window = {
-            mappings = {
-              -- smart open
-              ["l"] = "open",
-              ["<CR>"] = "open",
-
-              -- re-root explicitly
-              ["R"] = "set_root",
-
-              -- navigation
-              ["h"] = "navigate_up",
-              ["<BS>"] = "navigate_up",
-
-              -- toggles
-              ["H"] = "toggle_hidden",
-              ["I"] = "toggle_gitignored",
-            },
-          },
-        },
-      })
-
-
-    end,
-  },
-
-  {
-    "neovim/nvim-lspconfig",
-    dependencies = {
-      "williamboman/mason.nvim",
-      "williamboman/mason-lspconfig.nvim",
-      "hrsh7th/nvim-cmp",
-      "hrsh7th/cmp-nvim-lsp",
-      "hrsh7th/cmp-buffer",
-      "hrsh7th/cmp-path",
-      "SmiteshP/nvim-navic", -- breadcrumb backend
-    },
-    config = function()
-      require("mason").setup()
-
-      require("mason-lspconfig").setup({
-        ensure_installed = {
-          "lua_ls",
-          "ts_ls",
-          "pyright",
-          "clangd",
-        },
-      })
-
-      local cmp = require("cmp")
-      local navic = require("nvim-navic")
-
-      cmp.setup({
-        mapping = cmp.mapping.preset.insert({
-          ["<CR>"] = cmp.mapping.confirm({ select = true }),
-          ["<Tab>"] = cmp.mapping.select_next_item(),
-          ["<S-Tab>"] = cmp.mapping.select_prev_item(),
-        }),
-        sources = {
-          { name = "nvim_lsp" },
-          { name = "buffer" },
-          { name = "path" },
-        },
-      })
-
-      local capabilities = require("cmp_nvim_lsp").default_capabilities()
-
-      local on_attach = function(client, bufnr)
-        if client.server_capabilities.documentSymbolProvider then
-          navic.attach(client, bufnr)
-        end
-      end
-
-      vim.lsp.config("lua_ls", {
-        capabilities = capabilities,
-        on_attach = on_attach,
-        settings = {
-          Lua = {
-            diagnostics = {
-              globals = { "vim" },
-            },
-          },
-        },
-      })
-
-      vim.lsp.config("ts_ls", {
-        capabilities = capabilities,
-        on_attach = on_attach,
-      })
-
-      vim.lsp.config("pyright", {
-        capabilities = capabilities,
-        on_attach = on_attach,
-      })
-
-      vim.lsp.config("clangd", {
-        capabilities = capabilities,
-        on_attach = on_attach,
-      })
-    end,
-  },
-
-  {
-    "nvim-lualine/lualine.nvim",
-    config = function()
-      require("lualine").setup({
-        options = {
-          theme = "dracula",
-        },
-      })
-    end,
-  },
-
-  -- =========================
-  -- Breadcrumbs (winbar)
-  -- =========================
-  {
-    "utilyre/barbecue.nvim",
-    name = "barbecue",
-    version = "*",
-    dependencies = {
-      "SmiteshP/nvim-navic",
-      "nvim-tree/nvim-web-devicons",
-    },
-    config = function()
-      require("barbecue").setup({
-        show_dirname = true,
-        show_basename = true,
-        show_modified = true,
-        symbols = {
-          separator = " › ",
-        },
-      })
-    end,
-  },
-
-  {
-    "rainbowhxch/accelerated-jk.nvim",
-    config = function()
-      require("accelerated-jk").setup()
-    end,
-  },
-  {
-    'MeanderingProgrammer/render-markdown.nvim',
-    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' },            -- if you use the mini.nvim suite
-    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.icons' },        -- if you use standalone mini plugins
-    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
-    ---@module 'render-markdown'
-    ---@type render.md.UserConfig
-    opts = {},
-  },
-  {
-	  "rubiin/fortune.nvim",
-	  config = function()
-		  require("fortune").setup()
-	  end,
-  },
-  {
-  "goolord/alpha-nvim",
-  dependencies = { "nvim-tree/nvim-web-devicons" },
-  config = function()
-    local alpha = require("alpha")
-    local dashboard = require("alpha.themes.dashboard")
-
-    dashboard.section.buttons.val = {
-      dashboard.button("e", "  New file", ":ene <BAR> startinsert <CR>"),
-      dashboard.button("f", "󰈞  Find file", ":Telescope find_files<CR>"),
-      dashboard.button("h", "󰋚  Recently opened files", ":Telescope oldfiles<CR>"),
-      dashboard.button("r", "󰑕  Frecency / MRU", ":Telescope frecency<CR>"),
-      dashboard.button("g", "󰊄  Find word", ":Telescope live_grep<CR>"),
-      dashboard.button("m", "󰃀  Jump to bookmarks", ":Telescope marks<CR>"),
-      dashboard.button("q", "󰩈  Quit Neovim", ":qa<CR>"),
-    }
-
-    dashboard.section.footer.val = require("fortune").get_fortune()
-
-    alpha.setup(dashboard.config)
+        highlight = { enable = true,
+        additional_vim_regex_highlighting = false,
+      },
+      indent = { enable = true },
+    })
   end,
 },
+
+{
+  "windwp/nvim-autopairs",
+  event = "InsertEnter",
+  config = function()
+    require("nvim-autopairs").setup({})
+  end,
+},
+
+{
+  "nvim-neo-tree/neo-tree.nvim",
+  branch = "v3.x",
+  dependencies = {
+    "nvim-lua/plenary.nvim",
+    "MunifTanjim/nui.nvim",
+    "nvim-tree/nvim-web-devicons",
+  },
+  lazy = false,
+  config = function()
+    vim.keymap.set("n", "<C-n>", ":Neotree filesystem toggle left<CR>")
+    vim.keymap.set("n", "<leader>bf", ":Neotree buffers reveal float<CR>")
+    require("neo-tree").setup({
+      filesystem = {
+        bind_to_cwd = false,
+        follow_current_file = false,
+
+        filtered_items = {
+          visible = false,
+          hide_dotfiles = true,
+          hide_gitignored = true,
+        },
+
+        window = {
+          mappings = {
+            -- smart open
+            ["l"] = "open",
+            ["<CR>"] = "open",
+
+            -- re-root explicitly
+            ["R"] = "set_root",
+
+            -- navigation
+            ["h"] = "navigate_up",
+            ["<BS>"] = "navigate_up",
+
+            -- toggles
+            ["H"] = "toggle_hidden",
+            ["I"] = "toggle_gitignored",
+          },
+        },
+      },
+    })
+
+
+  end,
+},
+
+{
+  "neovim/nvim-lspconfig",
+  dependencies = {
+    "williamboman/mason.nvim",
+    "williamboman/mason-lspconfig.nvim",
+    "hrsh7th/nvim-cmp",
+    "hrsh7th/cmp-nvim-lsp",
+    "hrsh7th/cmp-buffer",
+    "hrsh7th/cmp-path",
+    "SmiteshP/nvim-navic", -- breadcrumb backend
+  },
+  config = function()
+    require("mason").setup()
+
+    require("mason-lspconfig").setup({
+      ensure_installed = {
+        "lua_ls",
+        "ts_ls",
+        "pyright",
+        "clangd",
+        "marksman",
+      },
+    })
+
+    local cmp = require("cmp")
+    local navic = require("nvim-navic")
+    local luasnip = require("luasnip")
+
+    cmp.setup({
+      mapping = cmp.mapping.preset.insert({
+        ["<Tab>"] = cmp.mapping(function(fallback)
+          if cmp.visible() then
+            cmp.select_next_item()
+          elseif luasnip.expand_or_jumpable() then
+            luasnip.expand_or_jump()
+          else
+            fallback() -- inserts spaces (expandtab)
+          end
+        end, { "i", "s" }),
+
+        ["<S-Tab>"] = cmp.mapping(function(fallback)
+          if cmp.visible() then
+            cmp.select_prev_item()
+          elseif luasnip.jumpable(-1) then
+            luasnip.jump(-1)
+          else
+            fallback()
+          end
+        end, { "i", "s" }),
+
+        ["<CR>"] = cmp.mapping.confirm({ select = true }),
+      }),
+      sources = {
+        { name = "luasnip"},
+        { name = "nvim_lsp" },
+        { name = "buffer" },
+        { name = "path" },
+      },
+    })
+
+    local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+    local on_attach = function(client, bufnr)
+      if client.server_capabilities.documentSymbolProvider then
+        navic.attach(client, bufnr)
+      end
+    end
+
+    vim.lsp.config("lua_ls", {
+      capabilities = capabilities,
+      on_attach = on_attach,
+      settings = {
+        Lua = {
+          diagnostics = {
+            globals = { "vim" },
+          },
+        },
+      },
+    })
+
+    vim.lsp.config("ts_ls", {
+      capabilities = capabilities,
+      on_attach = on_attach,
+    })
+
+    vim.lsp.config("pyright", {
+      capabilities = capabilities,
+      on_attach = on_attach,
+    })
+
+    vim.lsp.config("clangd", {
+      capabilities = capabilities,
+      on_attach = on_attach,
+    })
+
+    vim.lsp.config("marksman", {
+      capabilities = capabilities,
+      on_attach = on_attach,
+    })
+  end,
+},
+
+{
+  "nvim-lualine/lualine.nvim",
+  config = function()
+    require("lualine").setup({
+      options = {
+        theme = "dracula",
+      },
+    })
+  end,
+},
+
+-- =========================
+-- Breadcrumbs (winbar)
+-- =========================
+{
+  "utilyre/barbecue.nvim",
+  name = "barbecue",
+  version = "*",
+  dependencies = {
+    "SmiteshP/nvim-navic",
+    "nvim-tree/nvim-web-devicons",
+  },
+  config = function()
+    require("barbecue").setup({
+      show_dirname = true,
+      show_basename = true,
+      show_modified = true,
+      symbols = {
+        separator = " › ",
+      },
+    })
+  end,
+},
+
+{
+  "rainbowhxch/accelerated-jk.nvim",
+  config = function()
+    require("accelerated-jk").setup()
+  end,
+},
+{
+  'MeanderingProgrammer/render-markdown.nvim',
+  dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' },            -- if you use the mini.nvim suite
+  -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.icons' },        -- if you use standalone mini plugins
+  -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+  ---@module 'render-markdown'
+  ---@type render.md.UserConfig
+  opts = {
+    code = {  enabled = true,
+
+    style = 'normal',          -- instead of 'full'
+    border = 'thin',           -- NOT 'hide'
+    conceal_delimiters = false,
+
+    -- keep the nice stuff
+    language = true,
+    language_icon = true,
+    language_name = true,
+    width = 'full',
+  }
+},
+  },
+  {
+    "rubiin/fortune.nvim",
+    config = function()
+      require("fortune").setup()
+    end,
+  },
+  {
+    "goolord/alpha-nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    config = function()
+      local alpha = require("alpha")
+      local dashboard = require("alpha.themes.dashboard")
+
+      dashboard.section.buttons.val = {
+        dashboard.button("e", "  New file", ":ene <BAR> startinsert <CR>"),
+        dashboard.button("f", "󰈞  Find file", ":Telescope find_files<CR>"),
+        dashboard.button("h", "󰋚  Recently opened files", ":Telescope oldfiles<CR>"),
+        dashboard.button("r", "󰑕  Frecency / MRU", ":Telescope frecency<CR>"),
+        dashboard.button("g", "󰊄  Find word", ":Telescope live_grep<CR>"),
+        dashboard.button("m", "󰃀  Jump to bookmarks", ":Telescope marks<CR>"),
+        dashboard.button("q", "󰩈  Quit Neovim", ":qa<CR>"),
+      }
+
+      dashboard.section.footer.val = require("fortune").get_fortune()
+
+      alpha.setup(dashboard.config)
+    end,
+  },
+  {
+    "L3MON4D3/LuaSnip",
+    dependencies = { "saadparwaiz1/cmp_luasnip" },
+    config = function()
+      local ls = require("luasnip")
+      local s = ls.snippet
+      local t = ls.text_node
+      local i = ls.insert_node
+
+      ls.add_snippets("markdown", {
+        -- Notes
+        s("note", { t("> **Note:** "), i(1) }),
+        s("tip",  { t("> **Tip:** "), i(1) }),
+        s("warn", { t("> **Warning:** "), i(1) }),
+        s("info", { t("> **Info:** "), i(1) }),
+        -- Formatting
+        s("bold",   { t("**"), i(1), t("**") }),
+        s("italic", { t("*"),  i(1), t("*") }),
+        s("code",   { t("`"),  i(1), t("`") }),
+        s("strike", { t("~~"), i(1), t("~~") }),
+        -- Links / media
+        s("link", { t("["), i(1), t("]("), i(2), t(")") }),
+        s("img",  { t("!["), i(1), t("]("), i(2), t(")") }),
+        -- Code blocks
+        s("cb", {
+          t("```"), i(1, "language"),
+          t({ "", "" }),
+          i(2),
+          t({ "", "```" }),
+        }),
+        -- Lists
+        s("ul",   { t("- "), i(1) }),
+        s("ol",   { t("1. "), i(1) }),
+        s("task", { t("- [ ] "), i(1) }),
+        -- Headings
+        s("h1", { t("# "), i(1) }),
+        s("h2", { t("## "), i(1) }),
+        s("h3", { t("### "), i(1) }),
+        s("h4", { t("#### "), i(1) }),
+        s("h5", { t("##### "), i(1) }),
+        s("h6", { t("###### "), i(1) }),
+      })
+    end,
+  },
 
 
 }
