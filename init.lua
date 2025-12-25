@@ -5,7 +5,11 @@ vim.cmd("set shiftwidth=2")
 vim.cmd("set number")
 vim.cmd("set relativenumber")
 vim.opt.clipboard:append("unnamedplus")
+vim.opt.scrolloff = 5
+vim.opt.cursorline = true
+
 vim.g.mapleader = " "
+
 
 -- =========================
 -- lazy.nvim bootstrap
@@ -264,6 +268,45 @@ local plugins = {
       require("accelerated-jk").setup()
     end,
   },
+  {
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' },            -- if you use the mini.nvim suite
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.icons' },        -- if you use standalone mini plugins
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+    ---@module 'render-markdown'
+    ---@type render.md.UserConfig
+    opts = {},
+  },
+  {
+	  "rubiin/fortune.nvim",
+	  config = function()
+		  require("fortune").setup()
+	  end,
+  },
+  {
+  "goolord/alpha-nvim",
+  dependencies = { "nvim-tree/nvim-web-devicons" },
+  config = function()
+    local alpha = require("alpha")
+    local dashboard = require("alpha.themes.dashboard")
+
+    dashboard.section.buttons.val = {
+      dashboard.button("e", "  New file", ":ene <BAR> startinsert <CR>"),
+      dashboard.button("f", "󰈞  Find file", ":Telescope find_files<CR>"),
+      dashboard.button("h", "󰋚  Recently opened files", ":Telescope oldfiles<CR>"),
+      dashboard.button("r", "󰑕  Frecency / MRU", ":Telescope frecency<CR>"),
+      dashboard.button("g", "󰊄  Find word", ":Telescope live_grep<CR>"),
+      dashboard.button("m", "󰃀  Jump to bookmarks", ":Telescope marks<CR>"),
+      dashboard.button("q", "󰩈  Quit Neovim", ":qa<CR>"),
+    }
+
+    dashboard.section.footer.val = require("fortune").get_fortune()
+
+    alpha.setup(dashboard.config)
+  end,
+},
+
+
 }
 
 require("lazy").setup(plugins, {})
