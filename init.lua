@@ -10,7 +10,8 @@ vim.opt.scrolloff = 8
 -- vim.opt.scrolljump = 1
 -- vim.opt.virtualedit = "onemore"
 vim.opt.smoothscroll = true
-
+vim.opt.splitright = true
+vim.opt.splitbelow = true
 
 vim.g.mapleader = " "
 
@@ -43,7 +44,7 @@ vim.diagnostic.config({
 
 vim.keymap.set(
   "n",
-  "K",
+  "ge",
   vim.diagnostic.open_float,
   { desc = "Show diagnostic under cursor" }
 )
@@ -227,10 +228,19 @@ local plugins = {
 
     local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-    local on_attach = function(client, bufnr)
-      if client.server_capabilities.documentSymbolProvider then
-        navic.attach(client, bufnr)
-      end
+    local on_attach = function(_, bufnr)
+      local opts = { buffer = bufnr, silent = true }
+      -- navigation
+      vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+      vim.keymap.set("n", "gD", function ()
+        vim.cmd("vsplit")
+        vim.lsp.buf.definition()
+      end, { buffer = bufnr, silent = true, desc = "Definition in vertical split" })
+      vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
+      vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
+      vim.keymap.set("n", "gy", vim.lsp.buf.type_definition, opts)
+      -- info
+      vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
     end
 
     vim.lsp.config("lua_ls", {
@@ -454,13 +464,27 @@ local plugins = {
       symbol = "│",       -- thin, clean
       options = { try_as_border = true },
     },
+  },
+  {
+    "echasnovski/mini.files",
+    version = false,
+    keys = {
+      {
+        "<leader>e",
+        function()
+          require("mini.files").open(vim.api.nvim_buf_get_name(0))
+        end,
+        desc = "Open mini.files (cwd)",
+      },
+    },
+    opts = {
+      windows = {
+        preview = true,
+        width_focus = 30,
+        width_preview = 50,
+      },
+    },
   }
-
-
-
-
-
-
 }
 
 require("lazy").setup(plugins, {})

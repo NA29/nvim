@@ -1,0 +1,121 @@
+==============================
+NEOVIM – CUSTOM SHORTCUTS
+==============================
+
+LEADER
+------
+<Space>        Leader key
+
+
+LSP / CODE NAVIGATION
+---------------------
+gd             Go to definition (same pane)
+gD             Go to definition in vertical split (right)
+gi             Go to implementation
+gr             Find references
+gy             Go to type definition
+K              Hover documentation
+
+
+DIAGNOSTICS
+-----------
+ge             Show diagnostics under cursor
+[d             Previous diagnostic
+]d             Next diagnostic
+
+
+SEARCH / FILES
+--------------
+<C-p>          Telescope: find files
+<leader>f      Telescope: live grep
+<leader>e      Open mini.files file explorer
+<C-n>          Toggle Neo-tree (filesystem, left)
+<C-m>          Focus Neo-tree (filesystem, left)
+<leader>bf     Neo-tree: buffers (floating)
+
+
+WINDOW / PANE BEHAVIOR
+---------------------
+Splits open to the right and below by default
+<C-w>v         Vertical split
+<C-w>s         Horizontal split
+<C-w>q         Close current pane
+<C-o>          Jump back in jumplist
+
+
+EDITING
+-------
+<A-j>          Move current line down
+<A-k>          Move current line up
+<A-j> (visual) Move selection down
+<A-k> (visual) Move selection up
+<leader>y      Yank to system clipboard
+
+
+SCROLLING
+---------
+<C-d>          Smooth scroll down
+<C-u>          Smooth scroll up
+<C-f>          Smooth page down
+<C-b>          Smooth page up
+
+
+==============================
+TMUX – CUSTOM SHORTCUTS
+==============================
+
+PREFIX
+------
+<C-a>          Tmux prefix (replaces default C-b)
+
+
+CONFIG
+------
+Prefix + r     Reload tmux config
+
+
+WINDOW SWITCHING (NO PREFIX)
+----------------------------
+M-1 .. M-9     Switch to window 1–9
+M-Tab          Last window
+
+
+PANE NAVIGATION (NO PREFIX)
+---------------------------
+<C-h>          Move to left pane
+<C-j>          Move to pane below
+<C-k>          Move to pane above
+<C-l>          Move to right pane
+<C-\>          Last pane
+
+
+PANE RESIZE (NO PREFIX)
+-----------------------
+<C-M-h>        Resize pane left
+<C-M-j>        Resize pane down
+<C-M-k>        Resize pane up
+<C-M-l>        Resize pane right
+
+
+PANE SPLITS
+-----------
+"              Split pane vertically (same directory)
+%              Split pane horizontally (same directory)
+
+
+GENERAL
+-------
+Mouse enabled
+Status bar at top
+Pane/window indices start at 1
+Catppuccin theme enabled
+
+
+==============================
+NOTES
+==============================
+- Neovim splits open on the right/bottom
+- gD is repurposed for "definition in split"
+- <C-w> commands are canonical window controls
+- tmux pane navigation mirrors Neovim (C-h/j/k/l)
+
