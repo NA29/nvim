@@ -232,13 +232,29 @@ local plugins = {
       local opts = { buffer = bufnr, silent = true }
       -- navigation
       vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-      vim.keymap.set("n", "gD", function ()
-        vim.cmd("vsplit")
-        vim.lsp.buf.definition()
-      end, { buffer = bufnr, silent = true, desc = "Definition in vertical split" })
+
+      vim.keymap.set(
+        "n",
+        "gD",
+        function ()
+          vim.cmd("vsplit")
+          vim.lsp.buf.definition()
+        end, { buffer = bufnr, silent = true, desc = "Definition in vertical split" })
+
       vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
+
+      vim.keymap.set(
+        "n",
+        "gI",
+        function ()
+          vim.cmd("vsplit")
+          vim.lsp.buf.implementation()
+        end, { buffer = bufnr, silent = true, desc = "Implementation in vertical split" })
+
       vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
+
       vim.keymap.set("n", "gy", vim.lsp.buf.type_definition, opts)
+
       -- info
       vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
     end
