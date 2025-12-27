@@ -396,6 +396,12 @@ local plugins = {
         s("tip",  { t("> **Tip:** "), i(1) }),
         s("warn", { t("> **Warning:** "), i(1) }),
         s("info", { t("> **Info:** "), i(1) }),
+        s("def", {
+          t("**"),
+          i(1, "Term"),
+          t("** — "),
+          i(2, "definition"),
+        });
         -- Formatting
         s("bold",   { t("**"), i(1), t("**") }),
         s("italic", { t("*"),  i(1), t("*") }),
@@ -475,12 +481,22 @@ local plugins = {
   {
     "echasnovski/mini.indentscope",
     version = false,
-    event = "BufReadPre",
-    opts = {
-      symbol = "│",       -- thin, clean
-      options = { try_as_border = true },
-    },
-  },
+    event = "BufReadPost",
+    config = function()
+      require("mini.indentscope").setup({
+        symbol = "│",
+        options = { try_as_border = true },
+      })
+
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = { "markdown", "markdown_inline" },
+        callback = function()
+          vim.b.miniindentscope_disable = true
+        end,
+      })
+    end,
+  }
+,
   {
     "echasnovski/mini.files",
     version = false,
