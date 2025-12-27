@@ -4,9 +4,12 @@ vim.cmd("set softtabstop=2")
 vim.cmd("set shiftwidth=2")
 vim.cmd("set number")
 vim.cmd("set relativenumber")
-vim.opt.scrolloff = 5
-vim.opt.cursorline = true
 vim.g.markdown_recommended_style = 0
+vim.opt.cursorline = true
+vim.opt.scrolloff = 8
+-- vim.opt.scrolljump = 1
+-- vim.opt.virtualedit = "onemore"
+vim.opt.smoothscroll = true
 
 
 vim.g.mapleader = " "
@@ -52,7 +55,6 @@ vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" 
 vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
 vim.keymap.set({ "n", "v" }, "<leader>y", '"+y')
 
-
 -- =========================
 -- Plugins
 -- =========================
@@ -90,7 +92,7 @@ local plugins = {
         return
       end
       configs.setup({
-        ensure_installed = { "lua", "javascript", "cpp", "python", "markdown", "markdown_inline"},
+        ensure_installed = { "lua", "javascript", "cpp", "python", "markdown", "markdown_inline", "nix"},
         sync_install = false,
         auto_install = true,
         highlight = { enable = true,
@@ -307,26 +309,24 @@ local plugins = {
 },
 {
   'MeanderingProgrammer/render-markdown.nvim',
-  dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' },            -- if you use the mini.nvim suite
-  -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.icons' },        -- if you use standalone mini plugins
-  -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
-  ---@module 'render-markdown'
-  ---@type render.md.UserConfig
-  opts = {
-    code = {  enabled = true,
-
-    style = 'normal',          -- instead of 'full'
-    border = 'thin',           -- NOT 'hide'
-    conceal_delimiters = false,
-
-    -- keep the nice stuff
-    language = true,
-    language_icon = true,
-    language_name = true,
-    width = 'full',
-  }
-},
+  dependencies = {
+    'nvim-treesitter/nvim-treesitter',
+    'nvim-tree/nvim-web-devicons',
   },
+  opts = {
+    code = {
+      enabled = true,
+      -- highlight = true,
+      style = 'normal',
+      border = 'thin',
+      conceal_delimiters = false,
+      language = true,
+      language_icon = true,
+      language_name = true,
+      width = 'full',
+    },
+  },
+},
   {
     "rubiin/fortune.nvim",
     config = function()
@@ -405,6 +405,59 @@ local plugins = {
       require("Comment").setup()
     end,
   },
+  {
+    'Aasim-A/scrollEOF.nvim',
+    event = { 'CursorMoved', 'WinScrolled' },
+    opts = {},
+    config = function ()
+      require('scrollEOF').setup()
+    end
+  },
+  {
+    "karb94/neoscroll.nvim",
+    event = "WinScrolled",
+    config = function()
+      local neoscroll = require("neoscroll")
+      neoscroll.setup({
+        easing_function = "quadratic",
+        hide_cursor = true,
+        stop_eof = true,
+        respect_scrolloff = true,
+        cursor_scrolls_alone = true,
+      })
+
+      local keymap = vim.keymap.set
+      local scroll = neoscroll.scroll
+
+      keymap("n", "<C-d>", function()
+        scroll(vim.wo.scroll, { duration = 120 })
+      end, { silent = true })
+
+      keymap("n", "<C-u>", function()
+        scroll(-vim.wo.scroll, { duration = 120 })
+      end, { silent = true })
+
+      keymap("n", "<C-f>", function()
+        scroll(vim.api.nvim_win_get_height(0), { duration = 200 })
+      end, { silent = true })
+
+      keymap("n", "<C-b>", function()
+        scroll(-vim.api.nvim_win_get_height(0), { duration = 200 })
+      end, { silent = true })
+    end,
+  },
+  {
+    "echasnovski/mini.indentscope",
+    version = false,
+    event = "BufReadPre",
+    opts = {
+      symbol = "│",       -- thin, clean
+      options = { try_as_border = true },
+    },
+  }
+
+
+
 
 
 
