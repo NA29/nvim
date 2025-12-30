@@ -113,59 +113,59 @@ local plugins = {
   end,
 },
 
-{
-  "nvim-neo-tree/neo-tree.nvim",
-  branch = "v3.x",
-  dependencies = {
-    "nvim-lua/plenary.nvim",
-    "MunifTanjim/nui.nvim",
-    "nvim-tree/nvim-web-devicons",
-  },
-  lazy = false,
-  config = function()
-    vim.keymap.set("n", "<C-n>", ":Neotree filesystem toggle left<CR>")
-    vim.keymap.set(
-      "n",
-      "<C-m>",
-      ":Neotree filesystem focus left<CR>",
-      { desc = "Focus Neo-tree" }
-    )
-    vim.keymap.set("n", "<leader>bf", ":Neotree buffers reveal float<CR>")
-    require("neo-tree").setup({
-      filesystem = {
-        bind_to_cwd = false,
-        follow_current_file = false,
-
-        filtered_items = {
-          visible = false,
-          hide_dotfiles = true,
-          hide_gitignored = true,
-        },
-
-        window = {
-          mappings = {
-            -- smart open
-            ["l"] = "open",
-            ["<CR>"] = "open",
-
-            -- re-root explicitly
-            ["R"] = "set_root",
-
-            -- navigation
-            ["h"] = "navigate_up",
-            ["<BS>"] = "navigate_up",
-
-            -- toggles
-            ["H"] = "toggle_hidden",
-            ["I"] = "toggle_gitignored",
-          },
-        },
-      },
-    })
-
-
-  end,
-},
+-- {
+--   "nvim-neo-tree/neo-tree.nvim",
+--   branch = "v3.x",
+--   dependencies = {
+--     "nvim-lua/plenary.nvim",
+--     "MunifTanjim/nui.nvim",
+--     "nvim-tree/nvim-web-devicons",
+--   },
+--   lazy = false,
+--   config = function()
+--     vim.keymap.set("n", "<C-n>", ":Neotree filesystem toggle left<CR>")
+--     vim.keymap.set(
+--       "n",
+--       "<C-m>",
+--       ":Neotree filesystem focus left<CR>",
+--       { desc = "Focus Neo-tree" }
+--     )
+--     vim.keymap.set("n", "<leader>bf", ":Neotree buffers reveal float<CR>")
+--     require("neo-tree").setup({
+--       filesystem = {
+--         bind_to_cwd = false,
+--         follow_current_file = false,
+--
+--         filtered_items = {
+--           visible = false,
+--           hide_dotfiles = true,
+--           hide_gitignored = true,
+--         },
+--
+--         window = {
+--           mappings = {
+--             -- smart open
+--             ["l"] = "open",
+--             ["<CR>"] = "open",
+--
+--             -- re-root explicitly
+--             ["R"] = "set_root",
+--
+--             -- navigation
+--             ["h"] = "navigate_up",
+--             ["<BS>"] = "navigate_up",
+--
+--             -- toggles
+--             ["H"] = "toggle_hidden",
+--             ["I"] = "toggle_gitignored",
+--           },
+--         },
+--       },
+--     })
+--
+--
+--   end,
+-- },
 
 {
   "neovim/nvim-lspconfig",
@@ -218,6 +218,9 @@ local plugins = {
         end, { "i", "s" }),
 
         ["<CR>"] = cmp.mapping.confirm({ select = false }),
+
+        ["<C-g>"] = cmp.mapping.abort(),
+
       }),
       sources = {
         { name = "luasnip"},
@@ -387,30 +390,44 @@ local plugins = {
     dependencies = { "saadparwaiz1/cmp_luasnip" },
     config = function()
       local ls = require("luasnip")
-      local s = ls.snippet
-      local t = ls.text_node
-      local i = ls.insert_node
+      local s  = ls.snippet
+      local t  = ls.text_node
+      local i  = ls.insert_node
+
+      ls.config.set_config({
+        history = false, -- do NOT keep around old snippets
+        updateevents = "TextChanged,TextChangedI",
+        region_check_events = "CursorMoved,CursorHold,InsertEnter",
+        delete_check_events = "TextChanged,InsertLeave",
+        enable_autosnippets = false,
+      })
 
       ls.add_snippets("markdown", {
-        -- Notes
+
+        -- Notes / callouts
         s("note", { t("> **Note:** "), i(1) }),
         s("tip",  { t("> **Tip:** "), i(1) }),
         s("warn", { t("> **Warning:** "), i(1) }),
         s("info", { t("> **Info:** "), i(1) }),
+
+        -- Definition
         s("def", {
           t("**"),
           i(1, "Term"),
           t("** — "),
           i(2, "definition"),
-        });
+        }),
+
         -- Formatting
         s("bold",   { t("**"), i(1), t("**") }),
         s("italic", { t("*"),  i(1), t("*") }),
         s("code",   { t("`"),  i(1), t("`") }),
         s("strike", { t("~~"), i(1), t("~~") }),
-        -- Links / media
+
+        -- Links / images
         s("link", { t("["), i(1), t("]("), i(2), t(")") }),
         s("img",  { t("!["), i(1), t("]("), i(2), t(")") }),
+
         -- Code blocks
         s("cb", {
           t("```"), i(1, "language"),
@@ -418,10 +435,12 @@ local plugins = {
           i(2),
           t({ "", "```" }),
         }),
+
         -- Lists
         s("ul",   { t("- "), i(1) }),
         s("ol",   { t("1. "), i(1) }),
         s("task", { t("- [ ] "), i(1) }),
+
         -- Headings
         s("h1", { t("# "), i(1) }),
         s("h2", { t("## "), i(1) }),
@@ -429,9 +448,13 @@ local plugins = {
         s("h4", { t("#### "), i(1) }),
         s("h5", { t("##### "), i(1) }),
         s("h6", { t("###### "), i(1) }),
+
+        -- Newline
+        s("nl", { t("\\n") }),
       })
     end,
   },
+
   {
     "numToStr/Comment.nvim",
     config = function()
