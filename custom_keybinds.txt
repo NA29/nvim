@@ -7,11 +7,18 @@ LEADER
 <Space>        Leader key
 
 
+CLIPBOARD
+---------
+<leader>y      Yank selection to system clipboard (normal / visual)
+<leader>u      Yank entire file to system clipboard (ggVG"+y)
+
+
 LSP / CODE NAVIGATION
 ---------------------
 gd             Go to definition (same pane)
 gD             Go to definition in vertical split (right)
-gi             Go to implementation
+gi             Go to implementation (same pane)
+gI             Go to implementation in vertical split (right)
 gr             Find references
 gy             Go to type definition
 K              Hover documentation
@@ -28,94 +35,50 @@ SEARCH / FILES
 --------------
 <C-p>          Telescope: find files
 <leader>f      Telescope: live grep
-<leader>e      Open mini.files file explorer
-<C-n>          Toggle Neo-tree (filesystem, left)
-<C-m>          Focus Neo-tree (filesystem, left)
-<leader>bf     Neo-tree: buffers (floating)
+
+<leader>e      Open mini.files file explorer (focused on current file)
+
+<C-n>          Toggle Neo-tree filesystem (left)
+<C-m>          Focus Neo-tree filesystem (left)
+<leader>bf     Neo-tree: reveal buffers (floating)
 
 
-WINDOW / PANE BEHAVIOR
----------------------
-Splits open to the right and below by default
+WINDOW / SPLITS
+---------------
+Splits open to the right and bottom by default
+
 <C-w>v         Vertical split
 <C-w>s         Horizontal split
 <C-w>q         Close current pane
 <C-o>          Jump back in jumplist
 
 
-EDITING
--------
+EDITING / TEXT MANIPULATION
+---------------------------
 <A-j>          Move current line down
 <A-k>          Move current line up
+
 <A-j> (visual) Move selection down
 <A-k> (visual) Move selection up
-<leader>y      Yank to system clipboard
 
 
-SCROLLING
----------
+SCROLLING (SMOOTH)
+------------------
 <C-d>          Smooth scroll down
 <C-u>          Smooth scroll up
 <C-f>          Smooth page down
 <C-b>          Smooth page up
 
 
-==============================
-TMUX – CUSTOM SHORTCUTS
-==============================
-
-PREFIX
-------
-<C-a>          Tmux prefix (replaces default C-b)
-
-
-CONFIG
-------
-Prefix + r     Reload tmux config
-
-
-WINDOW SWITCHING (NO PREFIX)
-----------------------------
-M-1 .. M-9     Switch to window 1–9
-M-Tab          Last window
-
-
-PANE NAVIGATION (NO PREFIX)
+FILE TREE (NEO-TREE WINDOW)
 ---------------------------
-<C-h>          Move to left pane
-<C-j>          Move to pane below
-<C-k>          Move to pane above
-<C-l>          Move to right pane
-<C-\>          Last pane
+l / <CR>       Open file / directory
+h / <BS>       Navigate up
+R              Re-root filesystem
+H              Toggle hidden files
+I              Toggle gitignored files
 
 
-PANE RESIZE (NO PREFIX)
------------------------
-<C-M-h>        Resize pane left
-<C-M-j>        Resize pane down
-<C-M-k>        Resize pane up
-<C-M-l>        Resize pane right
-
-
-PANE SPLITS
------------
-"              Split pane vertically (same directory)
-%              Split pane horizontally (same directory)
-
-
-GENERAL
--------
-Mouse enabled
-Status bar at top
-Pane/window indices start at 1
-Catppuccin theme enabled
-
-
-==============================
-NOTES
-==============================
-- Neovim splits open on the right/bottom
-- gD is repurposed for "definition in split"
-- <C-w> commands are canonical window controls
-- tmux pane navigation mirrors Neovim (C-h/j/k/l)
-
+MISC
+----
+<C-Tab>        (Handled by terminal / tmux, not Neovim)

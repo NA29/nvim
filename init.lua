@@ -6,7 +6,7 @@ vim.cmd("set number")
 vim.cmd("set relativenumber")
 vim.g.markdown_recommended_style = 0
 vim.opt.cursorline = true
-vim.opt.scrolloff = 8
+vim.opt.scrolloff = 6
 -- vim.opt.scrolljump = 1
 -- vim.opt.virtualedit = "onemore"
 vim.opt.smoothscroll = true
@@ -55,6 +55,7 @@ vim.keymap.set("n", "<A-k>", ":m .-2<CR>==", { desc = "Move line up" })
 vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
 vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
 vim.keymap.set({ "n", "v" }, "<leader>y", '"+y')
+vim.keymap.set({ "n", "v" }, "<leader>u", 'ggVG"+y')
 
 -- =========================
 -- Plugins
@@ -451,7 +452,7 @@ local plugins = {
     config = function()
       local neoscroll = require("neoscroll")
       neoscroll.setup({
-        easing_function = "quadratic",
+        easing_function = "linear",
         hide_cursor = true,
         stop_eof = true,
         respect_scrolloff = true,
