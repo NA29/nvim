@@ -349,6 +349,9 @@ local plugins = {
         delete_check_events = "TextChanged,InsertLeave",
         enable_autosnippets = false,
       })
+      ls.add_snippets("cpp", {
+        s("nl", { t("\\n")})
+      })
 
       ls.add_snippets("markdown", {
 
