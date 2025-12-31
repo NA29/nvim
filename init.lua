@@ -103,6 +103,9 @@ local plugins = {
         "query",
         "markdown",
         "markdown_inline",
+        "html",
+        "css",
+        "java",
       },
       highlight = {
         enable = true,
@@ -121,6 +124,19 @@ local plugins = {
     end,
   },
 
+  {
+    "windwp/nvim-ts-autotag",
+    event = { "BufReadPre", "BufNewFile" },
+    config = function()
+      require("nvim-ts-autotag").setup({
+        opts = {
+          enable_close = true,
+          enable_rename = true,
+          enable_close_on_slash = false,
+        },
+      })
+    end,
+  },
 
   {
     "neovim/nvim-lspconfig",
@@ -140,6 +156,7 @@ local plugins = {
         ensure_installed = {
           "lua_ls",
           "ts_ls",
+          "eslint",
           "pyright",
           "clangd",
           "marksman",
@@ -215,6 +232,11 @@ local plugins = {
       })
 
       vim.lsp.config("ts_ls", {
+        capabilities = capabilities,
+        on_attach = on_attach,
+      })
+
+      vim.lsp.config("eslint", {
         capabilities = capabilities,
         on_attach = on_attach,
       })
