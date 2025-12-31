@@ -2,6 +2,9 @@
 NEOVIM – CUSTOM SHORTCUTS
 ==============================
 
+IMPORTANT ! ! !
+NEED TO `brew install tree-sitter-cli` FOR TREESITTER TO WORK
+
 LEADER
 ------
 <Space>        Leader key

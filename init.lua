@@ -6,7 +6,7 @@ vim.cmd("set number")
 vim.cmd("set relativenumber")
 vim.g.markdown_recommended_style = 0
 vim.opt.cursorline = true
-vim.opt.scrolloff = 6
+vim.opt.scrolloff = 8
 -- vim.opt.scrolljump = 1
 -- vim.opt.virtualedit = "onemore"
 vim.opt.smoothscroll = true
@@ -14,7 +14,6 @@ vim.opt.splitright = true
 vim.opt.splitbelow = true
 
 vim.g.mapleader = " "
-
 
 -- =========================
 -- lazy.nvim bootstrap
@@ -57,6 +56,8 @@ vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
 vim.keymap.set({ "n", "v" }, "<leader>y", '"+y')
 vim.keymap.set({ "n", "v" }, "<leader>u", 'ggVG"+y')
 
+-- vim.g.loaded_markdown_syntax = 1
+
 -- =========================
 -- Plugins
 -- =========================
@@ -88,275 +89,222 @@ local plugins = {
   {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
-    config = function()
-      local status_ok, configs = pcall(require, "nvim-treesitter.configs")
-      if not status_ok then
-        return
-      end
-      configs.setup({
-        ensure_installed = { "lua", "javascript", "cpp", "python", "markdown", "markdown_inline", "nix"},
-        sync_install = false,
-        auto_install = true,
-        highlight = { enable = true,
+    lazy = false,
+    opts = {
+      ensure_installed = {
+        "c",
+        "cpp",
+        "python",
+        "javascript",
+        "typescript",
+        "lua",
+        "vim",
+        "vimdoc",
+        "query",
+        "markdown",
+        "markdown_inline",
+      },
+      highlight = {
+        enable = true,
         additional_vim_regex_highlighting = false,
       },
       indent = { enable = true },
-    })
-  end,
-},
-
-{
-  "windwp/nvim-autopairs",
-  event = "InsertEnter",
-  config = function()
-    require("nvim-autopairs").setup({})
-  end,
-},
-
--- {
---   "nvim-neo-tree/neo-tree.nvim",
---   branch = "v3.x",
---   dependencies = {
---     "nvim-lua/plenary.nvim",
---     "MunifTanjim/nui.nvim",
---     "nvim-tree/nvim-web-devicons",
---   },
---   lazy = false,
---   config = function()
---     vim.keymap.set("n", "<C-n>", ":Neotree filesystem toggle left<CR>")
---     vim.keymap.set(
---       "n",
---       "<C-m>",
---       ":Neotree filesystem focus left<CR>",
---       { desc = "Focus Neo-tree" }
---     )
---     vim.keymap.set("n", "<leader>bf", ":Neotree buffers reveal float<CR>")
---     require("neo-tree").setup({
---       filesystem = {
---         bind_to_cwd = false,
---         follow_current_file = false,
---
---         filtered_items = {
---           visible = false,
---           hide_dotfiles = true,
---           hide_gitignored = true,
---         },
---
---         window = {
---           mappings = {
---             -- smart open
---             ["l"] = "open",
---             ["<CR>"] = "open",
---
---             -- re-root explicitly
---             ["R"] = "set_root",
---
---             -- navigation
---             ["h"] = "navigate_up",
---             ["<BS>"] = "navigate_up",
---
---             -- toggles
---             ["H"] = "toggle_hidden",
---             ["I"] = "toggle_gitignored",
---           },
---         },
---       },
---     })
---
---
---   end,
--- },
-
-{
-  "neovim/nvim-lspconfig",
-  dependencies = {
-    "williamboman/mason.nvim",
-    "williamboman/mason-lspconfig.nvim",
-    "hrsh7th/nvim-cmp",
-    "hrsh7th/cmp-nvim-lsp",
-    "hrsh7th/cmp-buffer",
-    "hrsh7th/cmp-path",
-    "SmiteshP/nvim-navic", -- breadcrumb backend
-  },
-  config = function()
-    require("mason").setup()
-
-    require("mason-lspconfig").setup({
-      ensure_installed = {
-        "lua_ls",
-        "ts_ls",
-        "pyright",
-        "clangd",
-        "marksman",
-      },
-    })
-
-    local cmp = require("cmp")
-    local navic = require("nvim-navic")
-    local luasnip = require("luasnip")
-
-    cmp.setup({
-      mapping = cmp.mapping.preset.insert({
-        ["<Tab>"] = cmp.mapping(function(fallback)
-          if cmp.visible() then
-            cmp.select_next_item()
-          elseif luasnip.expand_or_jumpable() then
-            luasnip.expand_or_jump()
-          else
-            fallback() -- inserts spaces (expandtab)
-          end
-        end, { "i", "s" }),
-
-        ["<S-Tab>"] = cmp.mapping(function(fallback)
-          if cmp.visible() then
-            cmp.select_prev_item()
-          elseif luasnip.jumpable(-1) then
-            luasnip.jump(-1)
-          else
-            fallback()
-          end
-        end, { "i", "s" }),
-
-        ["<CR>"] = cmp.mapping.confirm({ select = false }),
-
-        ["<C-g>"] = cmp.mapping.abort(),
-
-      }),
-      sources = {
-        { name = "luasnip"},
-        { name = "nvim_lsp" },
-        { name = "buffer" },
-        { name = "path" },
-      },
-    })
-
-    local capabilities = require("cmp_nvim_lsp").default_capabilities()
-
-    local on_attach = function(_, bufnr)
-      local opts = { buffer = bufnr, silent = true }
-      -- navigation
-      vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-
-      vim.keymap.set(
-        "n",
-        "gD",
-        function ()
-          vim.cmd("vsplit")
-          vim.lsp.buf.definition()
-        end, { buffer = bufnr, silent = true, desc = "Definition in vertical split" })
-
-      vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
-
-      vim.keymap.set(
-        "n",
-        "gI",
-        function ()
-          vim.cmd("vsplit")
-          vim.lsp.buf.implementation()
-        end, { buffer = bufnr, silent = true, desc = "Implementation in vertical split" })
-
-      vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
-
-      vim.keymap.set("n", "gy", vim.lsp.buf.type_definition, opts)
-
-      -- info
-      vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-    end
-
-    vim.lsp.config("lua_ls", {
-      capabilities = capabilities,
-      on_attach = on_attach,
-      settings = {
-        Lua = {
-          diagnostics = {
-            globals = { "vim" },
-          },
-        },
-      },
-    })
-
-    vim.lsp.config("ts_ls", {
-      capabilities = capabilities,
-      on_attach = on_attach,
-    })
-
-    vim.lsp.config("pyright", {
-      capabilities = capabilities,
-      on_attach = on_attach,
-    })
-
-    vim.lsp.config("clangd", {
-      capabilities = capabilities,
-      on_attach = on_attach,
-    })
-
-    vim.lsp.config("marksman", {
-      capabilities = capabilities,
-      on_attach = on_attach,
-    })
-  end,
-},
-
-{
-  "nvim-lualine/lualine.nvim",
-  config = function()
-    require("lualine").setup({
-      options = {
-        theme = "dracula",
-      },
-    })
-  end,
-},
-
--- =========================
--- Breadcrumbs (winbar)
--- =========================
-{
-  "utilyre/barbecue.nvim",
-  name = "barbecue",
-  version = "*",
-  dependencies = {
-    "SmiteshP/nvim-navic",
-    "nvim-tree/nvim-web-devicons",
-  },
-  config = function()
-    require("barbecue").setup({
-      show_dirname = true,
-      show_basename = true,
-      show_modified = true,
-      symbols = {
-        separator = " › ",
-      },
-    })
-  end,
-},
-
-{
-  "rainbowhxch/accelerated-jk.nvim",
-  config = function()
-    require("accelerated-jk").setup()
-  end,
-},
-{
-  'MeanderingProgrammer/render-markdown.nvim',
-  dependencies = {
-    'nvim-treesitter/nvim-treesitter',
-    'nvim-tree/nvim-web-devicons',
-  },
-  opts = {
-    code = {
-      enabled = true,
-      -- highlight = true,
-      style = 'normal',
-      border = 'thin',
-      conceal_delimiters = false,
-      language = true,
-      language_icon = true,
-      language_name = true,
-      width = 'full',
+      incremental_selection = { enable = true },
     },
   },
-},
+
+  {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    config = function()
+      require("nvim-autopairs").setup({})
+    end,
+  },
+
+
+  {
+    "neovim/nvim-lspconfig",
+    dependencies = {
+      "williamboman/mason.nvim",
+      "williamboman/mason-lspconfig.nvim",
+      "hrsh7th/nvim-cmp",
+      "hrsh7th/cmp-nvim-lsp",
+      "hrsh7th/cmp-buffer",
+      "hrsh7th/cmp-path",
+      "SmiteshP/nvim-navic",
+    },
+    config = function()
+      require("mason").setup()
+
+      require("mason-lspconfig").setup({
+        ensure_installed = {
+          "lua_ls",
+          "ts_ls",
+          "pyright",
+          "clangd",
+          "marksman",
+        },
+      })
+
+      local cmp = require("cmp")
+      local luasnip = require("luasnip")
+
+      cmp.setup({
+        mapping = cmp.mapping.preset.insert({
+          ["<Tab>"] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_next_item()
+            elseif luasnip.expand_or_jumpable() then
+              luasnip.expand_or_jump()
+            else
+              fallback()
+            end
+          end, { "i", "s" }),
+
+          ["<S-Tab>"] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_prev_item()
+            elseif luasnip.jumpable(-1) then
+              luasnip.jump(-1)
+            else
+              fallback()
+            end
+          end, { "i", "s" }),
+
+          ["<CR>"] = cmp.mapping.confirm({ select = false }),
+          ["<C-g>"] = cmp.mapping.abort(),
+        }),
+        sources = {
+          { name = "luasnip" },
+          { name = "nvim_lsp" },
+          { name = "buffer" },
+          { name = "path" },
+        },
+      })
+
+      local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+      local on_attach = function(_, bufnr)
+        local opts = { buffer = bufnr, silent = true }
+
+        vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+        vim.keymap.set("n", "gD", function()
+          vim.cmd("vsplit")
+          vim.lsp.buf.definition()
+        end, opts)
+
+        vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
+        vim.keymap.set("n", "gI", function()
+          vim.cmd("vsplit")
+          vim.lsp.buf.implementation()
+        end, opts)
+
+        vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
+        vim.keymap.set("n", "gy", vim.lsp.buf.type_definition, opts)
+        vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+      end
+
+      vim.lsp.config("lua_ls", {
+        capabilities = capabilities,
+        on_attach = on_attach,
+        settings = {
+          Lua = {
+            diagnostics = { globals = { "vim" } },
+          },
+        },
+      })
+
+      vim.lsp.config("ts_ls", {
+        capabilities = capabilities,
+        on_attach = on_attach,
+      })
+
+      vim.lsp.config("pyright", {
+        capabilities = capabilities,
+        on_attach = on_attach,
+      })
+
+      vim.lsp.config("clangd", {
+        capabilities = capabilities,
+        on_attach = on_attach,
+      })
+
+      vim.lsp.config("marksman", {
+        capabilities = capabilities,
+        on_attach = on_attach,
+      })
+    end,
+  },
+
+
+
+  {
+    "nvim-lualine/lualine.nvim",
+    config = function()
+      require("lualine").setup({
+        options = {
+          theme = "dracula",
+        },
+      })
+    end,
+  },
+
+  -- =========================
+  -- Breadcrumbs (winbar)
+  -- =========================
+  {
+    "utilyre/barbecue.nvim",
+    name = "barbecue",
+    version = "*",
+    dependencies = {
+      "SmiteshP/nvim-navic",
+      "nvim-tree/nvim-web-devicons",
+    },
+    config = function()
+      require("barbecue").setup({
+        show_dirname = true,
+        show_basename = true,
+        show_modified = true,
+        symbols = {
+          separator = " › ",
+        },
+      })
+    end,
+  },
+
+  {
+    "rainbowhxch/accelerated-jk.nvim",
+    config = function()
+      require("accelerated-jk").setup()
+    end,
+  },
+  {
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+      'nvim-tree/nvim-web-devicons',
+    },
+    opts = {
+      restart_highlighter = true,
+      code = {
+        enabled = true,
+        sign = true,
+        style = 'full',  -- Use 'full' style for complete treesitter highlighting
+        position = 'right',
+        width = 'block',
+        left_pad = 2,
+        right_pad = 2,
+        left_margin = 1,
+        border = 'thin',
+        above = '▁',
+        below = '▔',
+        language_left = '█',
+        language_right = '█',
+        language_border = '▁',
+        -- highlight = 'RenderMarkdownCode',
+      },
+    },
+  },
   {
     "rubiin/fortune.nvim",
     config = function()
@@ -520,7 +468,7 @@ local plugins = {
       })
     end,
   }
-,
+  ,
   {
     "echasnovski/mini.files",
     version = false,
