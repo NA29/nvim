@@ -56,7 +56,7 @@ vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
 vim.keymap.set({ "n", "v" }, "<leader>y", '"+y')
 vim.keymap.set({ "n", "v" }, "<leader>u", 'ggVG"+y')
 
--- vim.g.loaded_markdown_syntax = 1
+vim.keymap.set('n', '<Esc>', '<cmd>noh<CR>', { silent = true })
 
 -- =========================
 -- Plugins
@@ -150,6 +150,9 @@ local plugins = {
       "SmiteshP/nvim-navic",
     },
     config = function()
+      -- =========================
+      -- Mason
+      -- =========================
       require("mason").setup()
 
       require("mason-lspconfig").setup({
@@ -163,6 +166,9 @@ local plugins = {
         },
       })
 
+      -- =========================
+      -- nvim-cmp
+      -- =========================
       local cmp = require("cmp")
       local luasnip = require("luasnip")
 
@@ -199,6 +205,9 @@ local plugins = {
         },
       })
 
+      -- =========================
+      -- LSP setup
+      -- =========================
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
       local on_attach = function(_, bufnr)
@@ -220,6 +229,10 @@ local plugins = {
         vim.keymap.set("n", "gy", vim.lsp.buf.type_definition, opts)
         vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
       end
+
+      -- =========================
+      -- Servers
+      -- =========================
 
       vim.lsp.config("lua_ls", {
         capabilities = capabilities,
@@ -258,7 +271,36 @@ local plugins = {
     end,
   },
 
+  {
+    "stevearc/conform.nvim",
+    event = "BufWritePre",
+    opts = {
+      -- Format on save
+      format_on_save = {
+        timeout_ms = 2000,
+        lsp_fallback = false,
+      },
 
+      -- Which formatter to use per filetype
+      formatters_by_ft = {
+        -- C / C++
+        c = { "clang-format" },
+        cpp = { "clang-format" },
+
+        -- TypeScript / JavaScript
+        javascript = { "prettier" },
+        javascriptreact = { "prettier" },
+        typescript = { "prettier" },
+        typescriptreact = { "prettier" },
+
+        -- Python
+        python = { "black" },
+
+        -- Markdown
+        markdown = { "prettier" },
+      },
+    },
+  },
 
   {
     "nvim-lualine/lualine.nvim",
@@ -311,7 +353,7 @@ local plugins = {
       code = {
         enabled = true,
         sign = true,
-        style = 'full',  -- Use 'full' style for complete treesitter highlighting
+        style = 'full', -- Use 'full' style for complete treesitter highlighting
         position = 'right',
         width = 'block',
         left_pad = 2,
@@ -372,14 +414,14 @@ local plugins = {
         enable_autosnippets = false,
       })
       ls.add_snippets("cpp", {
-        s("nl", { t("\\n")})
+        s("nl", { t("\\n") })
       })
 
       ls.add_snippets("markdown", {
 
         -- Notes / callouts
         s("note", { t("> **Note:** "), i(1) }),
-        s("tip",  { t("> **Tip:** "), i(1) }),
+        s("tip", { t("> **Tip:** "), i(1) }),
         s("warn", { t("> **Warning:** "), i(1) }),
         s("info", { t("> **Info:** "), i(1) }),
 
@@ -392,14 +434,14 @@ local plugins = {
         }),
 
         -- Formatting
-        s("bold",   { t("**"), i(1), t("**") }),
-        s("italic", { t("*"),  i(1), t("*") }),
-        s("code",   { t("`"),  i(1), t("`") }),
+        s("bold", { t("**"), i(1), t("**") }),
+        s("italic", { t("*"), i(1), t("*") }),
+        s("code", { t("`"), i(1), t("`") }),
         s("strike", { t("~~"), i(1), t("~~") }),
 
         -- Links / images
         s("link", { t("["), i(1), t("]("), i(2), t(")") }),
-        s("img",  { t("!["), i(1), t("]("), i(2), t(")") }),
+        s("img", { t("!["), i(1), t("]("), i(2), t(")") }),
 
         -- Code blocks
         s("cb", {
@@ -410,8 +452,8 @@ local plugins = {
         }),
 
         -- Lists
-        s("ul",   { t("- "), i(1) }),
-        s("ol",   { t("1. "), i(1) }),
+        s("ul", { t("- "), i(1) }),
+        s("ol", { t("1. "), i(1) }),
         s("task", { t("- [ ] "), i(1) }),
 
         -- Headings
@@ -438,7 +480,7 @@ local plugins = {
     'Aasim-A/scrollEOF.nvim',
     event = { 'CursorMoved', 'WinScrolled' },
     opts = {},
-    config = function ()
+    config = function()
       require('scrollEOF').setup()
     end
   },
@@ -459,19 +501,19 @@ local plugins = {
       local scroll = neoscroll.scroll
 
       keymap("n", "<C-d>", function()
-        scroll(vim.wo.scroll, { duration = 120 })
+        scroll(vim.wo.scroll, { duration = 50 })
       end, { silent = true })
 
       keymap("n", "<C-u>", function()
-        scroll(-vim.wo.scroll, { duration = 120 })
+        scroll(-vim.wo.scroll, { duration = 50 })
       end, { silent = true })
 
       keymap("n", "<C-f>", function()
-        scroll(vim.api.nvim_win_get_height(0), { duration = 200 })
+        scroll(vim.api.nvim_win_get_height(0), { duration = 100 })
       end, { silent = true })
 
       keymap("n", "<C-b>", function()
-        scroll(-vim.api.nvim_win_get_height(0), { duration = 200 })
+        scroll(-vim.api.nvim_win_get_height(0), { duration = 100 })
       end, { silent = true })
     end,
   },
@@ -513,7 +555,41 @@ local plugins = {
         width_preview = 50,
       },
     },
+  },
+
+  {
+    'mluders/comfy-line-numbers.nvim',
+    config = function()
+      require('comfy-line-numbers').setup({
+        labels = {
+          '1', '2', '3', '4', '5',
+          '11', '12', '13', '14', '15',
+          '21', '22', '23', '24', '25',
+          '31', '32', '33', '34', '35',
+          '41', '42', '43', '44', '45',
+          '51', '52', '53', '54', '55',
+          '111', '112', '113', '114', '115',
+          '121', '122', '123', '124', '125',
+          '131', '132', '133', '134', '135',
+          '141', '142', '143', '144', '145',
+          '151', '152', '153', '154', '155',
+          '211', '212', '213', '214', '215',
+          '221', '222', '223', '224', '225',
+          '231', '232', '233', '234', '235',
+          '241', '242', '243', '244', '245',
+          '251', '252', '253', '254', '255',
+        },
+
+        up_key = 'k',
+        down_key = 'j',
+
+        -- Line numbers will be completely hidden for the following file/buffer types
+        hidden_file_types = { 'undotree' },
+        hidden_buffer_types = { 'terminal', 'nofile' },
+      })
+    end,
   }
+
 }
 
 require("lazy").setup(plugins, {})
