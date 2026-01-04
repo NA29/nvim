@@ -78,6 +78,11 @@ bindkey '^[[6~' down-line-or-history
 bindkey "^r" history-incremental-search-backward
 bindkey ' ' magic-space
 bindkey '^I' complete-word
+# Completion navigation
+bindkey '^I' menu-complete
+bindkey '^[[Z' reverse-menu-complete
+
+
 
 # --------------------------------------------------
 # Completion styling
@@ -149,7 +154,6 @@ eval "$(thefuck --alias)"
 # --------------------------------------------------
 
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
-bindkey '^[[Z' autosuggest-accept
 
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 
@@ -160,4 +164,8 @@ source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # initialize Starship prompt
-eval "$(starship init zsh)"
+# eval "$(starship init zsh)"
+autoload -Uz colors && colors
+
+PROMPT='%F{#bdae93}%~%f %F{#fabd2f}$%f '
+

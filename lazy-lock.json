@@ -11,6 +11,7 @@
   "comfy-line-numbers.nvim": { "branch": "main", "commit": "3c51fa4104b97ddaccb66a6b34552e3eafd5b645" },
   "conform.nvim": { "branch": "master", "commit": "8314f4c9e205e7f30b62147069729f9a1227d8bf" },
   "fortune.nvim": { "branch": "master", "commit": "1f559ff20b295b083c73c96bf935cad12c72ddca" },
+  "gruvbox.nvim": { "branch": "main", "commit": "5e0a460d8e0f7f669c158dedd5f9ae2bcac31437" },
   "lazy.nvim": { "branch": "main", "commit": "306a05526ada86a7b30af95c5cc81ffba93fef97" },
   "lualine.nvim": { "branch": "master", "commit": "47f91c416daef12db467145e16bed5bbfe00add8" },
   "mason-lspconfig.nvim": { "branch": "main", "commit": "4cfe411526a7a99c18281135e8b4765ae6330d15" },
