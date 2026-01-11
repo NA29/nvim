@@ -15,6 +15,7 @@ vim.opt.smoothscroll = true
 vim.opt.splitright = true
 vim.opt.splitbelow = true
 vim.g.mapleader = " "
+vim.opt.wrap = true
 
 
 -- =========================
