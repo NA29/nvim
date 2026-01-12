@@ -167,5 +167,6 @@ source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # eval "$(starship init zsh)"
 autoload -Uz colors && colors
 
-PROMPT='%F{#bdae93}%~%f %F{#fabd2f}$%f '
+# PROMPT='%F{#bdae93}%~%f %F{#fabd2f}$%f '
+PROMPT='%F{#e0def4}%~%f %F{#c4a7e7}$%f '
 
