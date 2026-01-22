@@ -51,7 +51,7 @@ vim.keymap.set(
   { desc = "Show diagnostic under cursor" }
 )
 
-vim.keymap.set("n", "<leader>fm", function()
+vim.keymap.set("n", "<leader>m", function()
   require("conform").format({
     timeout_ms = 2000,
   })
